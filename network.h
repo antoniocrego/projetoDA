@@ -6,7 +6,18 @@
 #define PROJETODA_NETWORK_H
 
 
-class network {
+#include "data_structures/Graph.h"
+#include "Station.h"
+#include <unordered_map>
+using namespace std;
+
+class Network {
+public:
+    void readStations();
+    void readNetwork();
+private:
+    Graph trainNetwork;
+    unordered_map<string,Station> stationInfo;
 
 };
 
