@@ -36,7 +36,7 @@ public:
     void setIndegree(unsigned int indegree);
     void setDist(double dist);
     void setPath(Edge *path);
-    Edge * addEdge(Vertex *dest, double w);
+    Edge * addEdge(Vertex *dest, double w, std::string service);
     bool removeEdge(int destID);
     void removeOutgoingEdges();
 
@@ -63,7 +63,7 @@ protected:
 
 class Edge {
 public:
-    Edge(Vertex *orig, Vertex *dest, double w);
+    Edge(Vertex *orig, Vertex *dest, double w, std::string service);
 
     Vertex * getDest() const;
     double getWeight() const;
@@ -87,6 +87,8 @@ protected:
     Edge *reverse = nullptr;
 
     double flow; // for flow-related problems
+
+    std::string service;
 };
 
 #endif /* DA_TP_CLASSES_VERTEX_EDGE */
