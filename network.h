@@ -23,6 +23,7 @@ public:
     string IDtoStation(int id);
 private:
     Graph trainNetwork;
+    Graph bdTrainNetwork;
     unordered_map<string,Station> stationInfo;
     unordered_map<string,int> stationToID;
 };
