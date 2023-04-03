@@ -21,6 +21,8 @@ public:
     void readNetwork();
     Graph getTrainNetwork();
     string IDtoStation(int id);
+
+    double maxFlow(const std::string& source, const std::string& dest);
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;

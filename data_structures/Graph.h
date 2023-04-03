@@ -35,6 +35,12 @@ public:
 
     int getNumVertex() const;
     std::vector<Vertex *> getVertexSet() const;
+
+    void testAndVisit(std::queue< Vertex*> &q, Edge *e, Vertex *w, double residual);
+    bool findAugmentingPath(Vertex *s, Vertex *t);
+    double findMinResidualAlongPath(Vertex *s, Vertex *t);
+    void augmentFlowAlongPath(Vertex *s, Vertex *t, double f);
+    double edmondsKarp(int source, int target);
 protected:
     std::vector<Vertex *> vertexSet;    // vertex set
 
