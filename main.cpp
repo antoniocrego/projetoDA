@@ -3,6 +3,6 @@
 int main(){
     Network manager = Network();
     Graph network = manager.getTrainNetwork();
-    for (auto c : network.getVertexSet()) cout << c->getId() << "," << manager.IDtoStation(c->getId()) << "\n";
+    cout << manager.maxFlow("Porto São Bento", "Braga");
     return 0;
 }
