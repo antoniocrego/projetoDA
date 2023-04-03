@@ -167,4 +167,5 @@ double Graph::edmondsKarp(int source, int target) {
         augmentFlowAlongPath(s, t, f);
         returnValue+=f;
     }
+    return returnValue;
 }
