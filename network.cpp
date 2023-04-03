@@ -44,8 +44,29 @@ Graph Network::getTrainNetwork() {
 }
 
 string Network::IDtoStation(int id) {
-    for(auto c : stationToID){
+    for(const auto& c : stationToID){
         if (c.second==id) return c.first;
     }
     return "Notfound";
+}
+
+double Network::maxFlow(const std::string& source, const std::string& dest){
+    double maxFlow = 0;
+    int srcID;
+    int destID;
+    try {
+        srcID = stationToID.at(source);
+        destID = stationToID.at(dest);
+    }
+    catch (const std::out_of_range& oor){
+        cout << "Invalid source or destination stations.\n";
+        return -1;
+    }
+    cout << srcID << " " << destID << endl;
+    maxFlow = trainNetwork.edmondsKarp(srcID, destID);
+    /*vector<Edge *> sinkEdges = trainNetwork.getVertexSet().at(destID)->getAdj();
+    for (Edge* e : sinkEdges){
+        maxFlow+=e->getFlow();
+    }*/
+    return maxFlow;
 }
