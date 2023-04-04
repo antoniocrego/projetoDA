@@ -24,6 +24,7 @@ public:
      *  Returns true if successful, and false if a vertex with that content already exists.
      */
     bool addVertex(const int &id);
+    bool removeVertex(const int& id);
 
     /*
      * Adds an edge to a graph (this), given the contents of the source and
@@ -35,6 +36,9 @@ public:
 
     int getNumVertex() const;
     std::vector<Vertex *> getVertexSet() const;
+
+    int megaSink(const std::vector<int>& sinks);
+    int megaSource(const std::vector<int>& sources);
 
     void testAndVisit(std::queue< Vertex*> &q, Edge *e, Vertex *w, double residual);
     bool findAugmentingPath(Vertex *s, Vertex *t);

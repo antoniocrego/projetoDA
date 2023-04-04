@@ -119,3 +119,21 @@ Station Network::getStationInfo(string name){
     }
     return iter->second;
 }
+
+double Network::maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs){
+    double currentMax = 0;
+    double iterationFlow;
+    for (int i = 0; i<stationToID.size(); i++){
+        for (int j=i; j<stationToID.size(); j++){
+            if (i==j) continue;
+            iterationFlow= maxFlow(IDtoStation(i), IDtoStation(j));
+            if (iterationFlow>currentMax){
+                currentMax=iterationFlow;
+                stationPairs.clear();
+                stationPairs.emplace_back(IDtoStation(i), IDtoStation(j));
+            }
+            else if (iterationFlow==currentMax) stationPairs.emplace_back(IDtoStation(i), IDtoStation(j));
+        }
+    }
+    return currentMax;
+}

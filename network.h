@@ -24,13 +24,12 @@ public:
     Station getStationInfo(string name);
 
     double maxFlow(const std::string& source, const std::string& dest);
+    double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;
     unordered_map<string,Station> stationInfo;
     unordered_map<string,int> stationToID;
-
-
 };
 
 

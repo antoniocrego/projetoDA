@@ -4,7 +4,6 @@
 int main(){
     Network manager = Network();
     Graph network = manager.getTrainNetwork(); //39
-    cout << manager.maxFlow("São Bartolomeu da Serra","Porto de Sines");
     Station station = manager.getStationInfo("Desvio Km 19.5");
     cout << station.getName() << " " << station.getDistrict() <<  " " << station.getMunicipality()  << " " << station.getTownship() << " " << station.getLine();
     /*string input;

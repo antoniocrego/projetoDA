@@ -168,3 +168,35 @@ double Graph::edmondsKarp(int source, int target) {
     }
     return maxFlow;
 }
+
+int Graph::megaSink(const std::vector<int>& sinks) {
+    this->addVertex(this->getNumVertex());
+    for(auto e: sinks) {
+        addBidirectionalEdge(e,this->getNumVertex()-1,INF,NULL);
+    }
+    return this->getNumVertex()-1;
+}
+
+int Graph::megaSource(const std::vector<int>& sources) {
+    this->addVertex(this->getNumVertex());
+    for(int i : sources){
+        this->addEdge(this->getNumVertex()-1, i, INF, NULL);
+    }
+    return this->getNumVertex()-1;
+}
+
+bool Graph::removeVertex(const int &id) {
+    for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
+        if ((*it)->getId() == id) {
+            auto v = *it;
+            v->removeOutgoingEdges();
+            for (auto u : vertexSet) {
+                u->removeEdge(v->getId());
+            }
+            vertexSet.erase(it);
+            delete v;
+            return true;
+        }
+    }
+    return false;
+}
