@@ -16,7 +16,6 @@ int main(){
             cout << manager.IDtoStation(edge->getOrig()->getId()) << "->" << manager.IDtoStation(edge->getDest()->getId()) << "-" << edge->getWeight() << "\n";
         }
     }*/
-
     Program p = Program();
     p.run();
 

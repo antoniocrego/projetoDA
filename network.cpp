@@ -17,7 +17,7 @@ void Network::readNetwork() {
         getline(inn, capacity, ',');
         getline(inn, service, ',');
         double gordo = stod(capacity);
-        trainNetwork.addEdge(stationToID.at(origin),stationToID.at(dest),gordo, service);
+        trainNetwork.addBidirectionalEdge(stationToID.at(origin),stationToID.at(dest),gordo, service);
     }
 }
 
