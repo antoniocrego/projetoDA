@@ -4,10 +4,11 @@
 int main(){
     Network manager = Network();
     Graph network = manager.getTrainNetwork(); //39
-    Station station = manager.getStationInfo("Desvio Km 19.5");
-    cout << station.getName() << " " << station.getDistrict() <<  " " << station.getMunicipality()  << " " << station.getTownship() << " " << station.getLine();
+    auto result = manager.multiMaxFlow();
+    for(auto i : result){
+        cout << i.first << "-" << i.second << endl;
+    }
     /*string input;
->>>>>>> eff60a63eef17efdddf9c59fd447846bd13e6b88
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
     if(input == "1") {

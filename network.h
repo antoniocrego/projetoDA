@@ -25,6 +25,8 @@ public:
 
     double maxFlow(const std::string& source, const std::string& dest);
     double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
+    vector<pair<int,string>> multiMaxFlow();
+
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;

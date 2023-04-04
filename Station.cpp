@@ -35,3 +35,16 @@ string Station::getMunicipality() {
 string Station::getTownship() {
     return this->township;
 }
+
+bool Station::operator<(Station s1) const {
+    if(this->township == s1.township){
+        if(this->municipality == s1.municipality){
+            if(this->district == s1.district){
+                return this->name < s1.name;
+            }
+            return this->district < s1.district;
+        }
+        return this->municipality < s1.municipality;
+    }
+    return this->township < s1.township;
+}

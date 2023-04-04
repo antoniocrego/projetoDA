@@ -17,6 +17,7 @@ public:
     string getMunicipality();
     string getTownship();
     string getLine();
+    bool operator<(Station s1) const;
 private:
     string name;
     string district;
