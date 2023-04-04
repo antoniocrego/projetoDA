@@ -63,10 +63,10 @@ double Network::maxFlow(const std::string& source, const std::string& dest){
         return -1;
     }
     cout << srcID << " " << destID << endl;
-    maxFlow = trainNetwork.edmondsKarp(srcID, destID);
+
     /*vector<Edge *> sinkEdges = trainNetwork.getVertexSet().at(destID)->getAdj();
     for (Edge* e : sinkEdges){
         maxFlow+=e->getFlow();
     }*/
-    return maxFlow;
+    return trainNetwork.edmondsKarp(srcID, destID);
 }

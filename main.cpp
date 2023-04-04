@@ -4,7 +4,7 @@
 int main(){
     Network manager = Network();
     Graph network = manager.getTrainNetwork();
-    cout << manager.maxFlow("Porto São Bento", "Braga");
+    cout << manager.maxFlow("São Bartolomeu da Serra","Porto de Sines");
     string input;
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;

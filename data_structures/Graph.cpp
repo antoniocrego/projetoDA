@@ -147,7 +147,8 @@ void Graph::augmentFlowAlongPath(Vertex *s, Vertex *t, double f) {
     }
 }
 
-/*void GreedyGraph::edmondsKarp(int source, int target) {
+double Graph::edmondsKarp(int source, int target) {
+    double maxFlow = 0;
     Vertex* s = findVertex(source);
     Vertex* t = findVertex(target);
     if (s == nullptr || t == nullptr || s == t)
@@ -163,46 +164,7 @@ void Graph::augmentFlowAlongPath(Vertex *s, Vertex *t, double f) {
     while( findAugmentingPath(s, t) ) {
         double f = findMinResidualAlongPath(s, t);
         augmentFlowAlongPath(s, t, f);
+        maxFlow+=f;
     }
-}*/
-
-double Graph::edmondsKarp(int sNode, int eNode)
-{
-    double flow = 0;
-    Vertex* s = findVertex(sNode);
-    Vertex* t = findVertex(eNode);
-    if(s==nullptr||t==nullptr) return -1;
-    for (auto v: vertexSet) {
-        for (auto e: v->getAdj()) {
-            e->setFlow(0);
-        }
-    }
-    while (t->getPath()==nullptr) {
-        for (auto v: vertexSet) v->setPath(nullptr);
-        std::queue<Vertex*> q;
-        q.push(s);
-        s->setDist(INF);
-        while (!q.empty()) {
-            Vertex* u = q.front();
-            q.pop();
-            for (auto e : u->getAdj()) {
-                if (e->getWeight() - e->getFlow() > 0 && u->getPath() == nullptr) {
-                    e->getDest()->setPath(e);
-                    q.push(e->getDest());
-                }
-            }
-        }
-        if (t->getPath()!= nullptr) {
-            double df = INF;
-            for (auto e = t->getPath(); e != nullptr; e = e->getOrig()->getPath()) {
-                df = std::min(df, e->getWeight() - e->getFlow());
-            }
-            for (auto e = t->getPath(); e != nullptr; e = e->getOrig()->getPath()) {
-                e->setFlow(e->getFlow() + df);
-                e->getReverse()->setFlow(e->getReverse()->getFlow() - df);
-            }
-            flow += df;
-        }
-    }
-    return flow;
+    return maxFlow;
 }
