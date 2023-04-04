@@ -3,9 +3,12 @@
 
 int main(){
     Network manager = Network();
-    Graph network = manager.getTrainNetwork();
+    Graph network = manager.getTrainNetwork(); //39
     cout << manager.maxFlow("São Bartolomeu da Serra","Porto de Sines");
-    string input;
+    Station station = manager.getStationInfo("Desvio Km 19.5");
+    cout << station.getName() << " " << station.getDistrict() <<  " " << station.getMunicipality()  << " " << station.getTownship() << " " << station.getLine();
+    /*string input;
+>>>>>>> eff60a63eef17efdddf9c59fd447846bd13e6b88
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
     if(input == "1") {
@@ -16,8 +19,9 @@ int main(){
         for(auto edge : vertex->getAdj()){
             cout << manager.IDtoStation(edge->getOrig()->getId()) << "->" << manager.IDtoStation(edge->getDest()->getId()) << "-" << edge->getWeight() << "\n";
         }
-    }
-    Program p = Program();
-    p.run();
+    }*/
+    //Program p = Program();
+    //p.run();
+
     return 0;
 }

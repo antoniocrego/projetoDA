@@ -65,7 +65,7 @@ void Program::createMainMenu()
 {
     menus.push_back(Menu("../menu/files/mainMenu"));
     menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, 1));
-    menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, 2));
+    menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, -1));
     menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, -1));
 }
 
@@ -76,6 +76,7 @@ void Program::createMainMenu()
 void Program::createMenuAlpha()
 {
     menus.push_back(Menu("../menu/files/menuAlpha"));
+    menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, 0));
     menus[menus.size() - 1].addMenuItem(new ChangeMenu(currMenuPage, network, 0));
 }
 /*
