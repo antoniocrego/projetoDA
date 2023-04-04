@@ -21,6 +21,7 @@ public:
     void readNetwork();
     Graph getTrainNetwork();
     string IDtoStation(int id);
+    Station getStationInfo(string name);
 
     double maxFlow(const std::string& source, const std::string& dest);
 private:
@@ -28,6 +29,8 @@ private:
     Graph bdTrainNetwork;
     unordered_map<string,Station> stationInfo;
     unordered_map<string,int> stationToID;
+
+
 };
 
 

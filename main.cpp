@@ -2,10 +2,11 @@
 #include "Program.h"
 
 int main(){
-    /*Network manager = Network();
-    Graph network = manager.getTrainNetwork();
-    cout << manager.maxFlow("Porto São Bento", "Braga");
-    string input;
+    Network manager = Network();
+    Graph network = manager.getTrainNetwork(); //39
+    Station station = manager.getStationInfo("Desvio Km 19.5");
+    cout << station.getName() << " " << station.getDistrict() <<  " " << station.getMunicipality()  << " " << station.getTownship() << " " << station.getLine();
+    /*string input;
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
     if(input == "1") {
@@ -17,8 +18,8 @@ int main(){
             cout << manager.IDtoStation(edge->getOrig()->getId()) << "->" << manager.IDtoStation(edge->getDest()->getId()) << "-" << edge->getWeight() << "\n";
         }
     }*/
-    Program p = Program();
-    p.run();
+    //Program p = Program();
+    //p.run();
 
     return 0;
 }

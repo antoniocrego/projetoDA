@@ -7,15 +7,35 @@ Network::Network(){
 
 void Network::readNetwork() {
     ifstream in("../data/network.csv");
-    string aLine, origin, dest, capacity, service;
+    string aLine, origin, dest, capacity, service, trash;
     getline(in, aLine);
     while (getline(in, aLine))
     {
         istringstream inn(aLine);
-        getline(inn, origin, ',');
-        getline(inn, dest, ',');
-        getline(inn, capacity, ',');
-        getline(inn, service, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, origin, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, origin, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, dest, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, dest, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, capacity, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, capacity, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, service, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, service, ',');
         double gordo = stod(capacity);
         trainNetwork.addBidirectionalEdge(stationToID.at(origin),stationToID.at(dest),gordo, service);
     }
@@ -23,17 +43,43 @@ void Network::readNetwork() {
 
 void Network::readStations() {
     ifstream in("../data/stations.csv");
-    string aLine, name, district, municipality, township, line;
+    string aLine, name, district, municipality, township, line, trash;
     getline(in, aLine);
     while (getline(in, aLine))
     {
         istringstream inn(aLine);
-        getline(inn, name, ',');
-        getline(inn, district, ',');
-        getline(inn, municipality, ',');
-        getline(inn, township, ',');
-        getline(inn, line, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, name, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, name, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, district, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, district, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, municipality, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, municipality, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, township, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, township, ',');
+        if (inn.peek()=='\"'){
+            getline(inn, trash, '\"');
+            getline(inn, line, '\"');
+            getline(inn,trash,',');
+        }
+        else getline(inn, line, ',');
         Station station = Station(name,district,municipality,township,line);
+        stationInfo.insert({name,station});
         stationToID.insert({name,stationToID.size()});
         trainNetwork.addVertex(stationToID.size()-1);
     }
@@ -69,4 +115,13 @@ double Network::maxFlow(const std::string& source, const std::string& dest){
         maxFlow+=e->getFlow();
     }*/
     return maxFlow;
+}
+
+Station Network::getStationInfo(string name){
+    auto iter = stationInfo.find(name);
+    if(iter == stationInfo.end()){
+        cout << "Notfound";
+        return Station();
+    }
+    return iter->second;
 }

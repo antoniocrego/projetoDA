@@ -10,7 +10,13 @@ using namespace std;
 
 class Station {
 public:
+    Station();
     Station(string name, string district, string municipality, string township, string line);
+    string getName();
+    string getDistrict();
+    string getMunicipality();
+    string getTownship();
+    string getLine();
 private:
     string name;
     string district;
