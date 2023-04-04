@@ -40,7 +40,8 @@ public:
     bool findAugmentingPath(Vertex *s, Vertex *t);
     double findMinResidualAlongPath(Vertex *s, Vertex *t);
     void augmentFlowAlongPath(Vertex *s, Vertex *t, double f);
-    double edmondsKarp(int source, int target);
+    int bfs(int sNode, int eNode);
+    double edmondsKarp(int sNode, int eNode);
 protected:
     std::vector<Vertex *> vertexSet;    // vertex set
 
