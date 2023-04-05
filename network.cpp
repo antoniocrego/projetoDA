@@ -1,4 +1,5 @@
 #include <set>
+#include <unordered_set>
 #include "Network.h"
 
 Network::Network(){
@@ -173,3 +174,52 @@ vector<pair<int,string>> Network::multiMaxFlow() {
     return maxflows;
 }
 
+/*double Network::reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments){
+    queue<int> toDelete;
+    Graph reducedConnectivity = Graph(trainNetwork);
+    for (Vertex* v : reducedConnectivity.getVertexSet()){
+        for (Edge* e : v->getAdj()){
+            if (segments.find(e)!=segments.end()) toDelete.push(e->getDest()->getId());
+        }
+        while(!toDelete.empty()){
+            v->removeEdge(toDelete.front());
+            toDelete.pop();
+        }
+    }
+    double maxFlow = 0;
+    int srcID;
+    int destID;
+    try {
+        srcID = stationToID.at(source);
+        destID = stationToID.at(dest);
+    }
+    catch (const std::out_of_range& oor){
+        cout << "Invalid source or destination stations.\n";
+        return -1;
+    }
+    return reducedConnectivity.edmondsKarp(srcID,destID);
+}*/ // this implementation is removing edges from the original graph
+
+double Network::reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments){
+    Graph reducedConnectivity;
+    for (Vertex* v : trainNetwork.getVertexSet()){
+        reducedConnectivity.addVertex(v->getId());
+    }
+    for (Vertex* v : trainNetwork.getVertexSet()) {
+        for (Edge *e: v->getAdj()) {
+            if (segments.find(e) == segments.end()) reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),"NOT NEEDED");
+        }
+    }
+    double maxFlow = 0;
+    int srcID;
+    int destID;
+    try {
+        srcID = stationToID.at(source);
+        destID = stationToID.at(dest);
+    }
+    catch (const std::out_of_range& oor){
+        cout << "Invalid source or destination stations.\n";
+        return -1;
+    }
+    return reducedConnectivity.edmondsKarp(srcID,destID);
+}
