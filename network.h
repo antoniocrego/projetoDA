@@ -23,11 +23,13 @@ public:
     Graph getTrainNetwork();
     string IDtoStation(int id);
     Station getStationInfo(string name);
+    int getStationID(const string& name);
 
     double maxFlow(const std::string& source, const std::string& dest);
     double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
     vector<pair<int,string>> multiMaxFlow();
     double reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments);
+    double segmentFailureEvaluation(unordered_set<Edge *> segments);
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;

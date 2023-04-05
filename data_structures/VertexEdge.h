@@ -71,10 +71,12 @@ public:
     Vertex * getOrig() const;
     Edge *getReverse() const;
     double getFlow() const;
+    std::string getService() const;
 
     void setSelected(bool selected);
     void setReverse(Edge *reverse);
     void setFlow(double flow);
+    bool operator==(Edge* e);
 protected:
     Vertex * dest; // destination vertex
     double weight; // edge weight, can also be used for capacity

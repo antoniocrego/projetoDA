@@ -207,7 +207,7 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     }
     for (Vertex* v : trainNetwork.getVertexSet()) {
         for (Edge *e: v->getAdj()) {
-            if (segments.find(e) == segments.end()) reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),"NOT NEEDED");
+            if (segments.find(e) == segments.end()) reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
         }
     }
     double maxFlow = 0;
@@ -222,4 +222,24 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
         return -1;
     }
     return reducedConnectivity.edmondsKarp(srcID,destID);
+}
+
+double Network::segmentFailureEvaluation(unordered_set<Edge *> segments) {
+    vector<int> megaSink;
+
+    for (Vertex* v1: trainNetwork.getVertexSet()){
+        for (Vertex* v2: trainNetwork.getVertexSet()){
+            if (v1==v2) continue;
+            megaSink.push_back(v2->getId());
+        }
+        trainNetwork.megaSink(megaSink);
+    }
+    return 0;
+}
+
+int Network::getStationID(const string& name) {
+    for (auto c : stationToID){
+        if (c.first==name) return c.second;
+    }
+    return -1;
 }

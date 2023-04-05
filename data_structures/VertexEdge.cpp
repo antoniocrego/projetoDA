@@ -166,3 +166,11 @@ void Edge::setReverse(Edge *reverse) {
 void Edge::setFlow(double flow) {
     this->flow = flow;
 }
+
+std::string Edge::getService() const {
+    return service;
+}
+
+bool Edge::operator==(Edge *e) {
+    return (orig==e->getOrig()) & (dest==e->getDest());
+}

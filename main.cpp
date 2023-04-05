@@ -8,8 +8,8 @@ int main(){
     for (auto e : network.getVertexSet().at(0)->getAdj()){
         temp.insert(e);
     }
-    cout << manager.reducedEdgesMaxFlow("Espinho","Braga",temp);
-    cout << manager.maxFlow("Espinho", "Braga");
+    cout << manager.reducedEdgesMaxFlow("Espinho","Vila Nova de Gaia-Devesas",temp) << endl;
+    cout << manager.maxFlow("Espinho", "Vila Nova de Gaia-Devesas");
     /*string input;
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
