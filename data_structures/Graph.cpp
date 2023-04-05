@@ -172,7 +172,7 @@ double Graph::edmondsKarp(int source, int target) {
 int Graph::megaSink(const std::vector<int>& sinks) {
     this->addVertex(this->getNumVertex());
     for(auto e: sinks) {
-        addBidirectionalEdge(e,this->getNumVertex()-1,INF,"");
+        addEdge(e,this->getNumVertex()-1,INF,"");
     }
     return this->getNumVertex()-1;
 }

@@ -29,7 +29,8 @@ public:
     double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
     vector<pair<int,string>> multiMaxFlow();
     double reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments);
-    double segmentFailureEvaluation(unordered_set<Edge *> segments);
+    vector<pair<int,pair<double,double>>> segmentFailureEvaluation(const unordered_set<Edge *>& segments);
+    double maxArrival(const std::string& station);
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;

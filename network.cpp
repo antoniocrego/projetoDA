@@ -224,17 +224,37 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     return reducedConnectivity.edmondsKarp(srcID,destID);
 }
 
-double Network::segmentFailureEvaluation(unordered_set<Edge *> segments) {
+vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const unordered_set<Edge *>& segments) {
     vector<int> megaSink;
-
-    for (Vertex* v1: trainNetwork.getVertexSet()){
-        for (Vertex* v2: trainNetwork.getVertexSet()){
-            if (v1==v2) continue;
-            megaSink.push_back(v2->getId());
-        }
-        trainNetwork.megaSink(megaSink);
+    vector<pair<int,pair<double,double>>> stationBeforeAfter;
+    pair<double,double> beforeAndAfter;
+    Graph reducedConnectivity;
+    for (Vertex* v: trainNetwork.getVertexSet()){
+        reducedConnectivity.addVertex(v->getId());
     }
-    return 0;
+    for (Vertex* v: trainNetwork.getVertexSet()){
+        megaSink.push_back(v->getId());
+        for (Edge * e : v->getAdj()){
+            reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
+        }
+    }
+    int megaSinkID = reducedConnectivity.megaSink(megaSink);
+    for (Vertex* v1: reducedConnectivity.getVertexSet()){
+        if (v1->getId()==megaSinkID) break;
+        reducedConnectivity.getVertexSet().at(v1->getId())->removeEdge(megaSinkID);
+        beforeAndAfter.first = reducedConnectivity.edmondsKarp(v1->getId(),megaSinkID);
+        beforeAndAfter.second = beforeAndAfter.first;
+        for (Edge * e : segments){
+            reducedConnectivity.getVertexSet().at(e->getOrig()->getId())->removeEdge(e->getDest()->getId());
+            reducedConnectivity.getVertexSet().at(e->getDest()->getId())->removeEdge(e->getOrig()->getId());
+            beforeAndAfter.second = reducedConnectivity.edmondsKarp(v1->getId(),megaSinkID);
+            stationBeforeAfter.emplace_back(v1->getId(),beforeAndAfter);
+            reducedConnectivity.addBidirectionalEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
+        }
+        reducedConnectivity.addEdge(v1->getId(),megaSinkID,INF,"");
+    }
+    reducedConnectivity.removeVertex(megaSinkID);
+    return stationBeforeAfter;
 }
 
 int Network::getStationID(const string& name) {
@@ -242,4 +262,23 @@ int Network::getStationID(const string& name) {
         if (c.first==name) return c.second;
     }
     return -1;
+}
+
+double Network::maxArrival(const std::string& station){
+    int stationID;
+    try {
+        stationID = stationToID.at(station);
+    }
+    catch (const std::out_of_range& oor){
+        cout << "Invalid station.\n";
+        return -1;
+    }
+    std::vector<int> sources;
+    for(auto v : this->trainNetwork.getVertexSet()){
+        if(v->getId() != stationID) sources.push_back(v->getId());
+    }
+    int sourceId = this->trainNetwork.megaSource(sources);
+    double result = this->trainNetwork.edmondsKarp(sourceId, stationID);
+    this->trainNetwork.removeVertex(sourceId);
+    return result;
 }

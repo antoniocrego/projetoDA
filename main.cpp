@@ -5,11 +5,15 @@ int main(){
     Network manager = Network();
     Graph network = manager.getTrainNetwork(); //39
     unordered_set<Edge *> temp;
-    for (auto e : network.getVertexSet().at(0)->getAdj()){
+    for (auto e : network.getVertexSet().at(0)->getIncoming()){
         temp.insert(e);
     }
-    cout << manager.reducedEdgesMaxFlow("Espinho","Vila Nova de Gaia-Devesas",temp) << endl;
-    cout << manager.maxFlow("Espinho", "Vila Nova de Gaia-Devesas");
+    auto result = manager.segmentFailureEvaluation(temp);
+    for (auto c : result){
+        cout << manager.IDtoStation(c.first) << endl;
+        cout << "\t" << c.second.first << "\\" << c.second.second << endl;
+    }
+    cout << manager.maxArrival("Porto Campanhã");
     /*string input;
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
