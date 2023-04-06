@@ -46,6 +46,7 @@ bool Graph::addVertex(const int &id) {
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
 bool Graph::addEdge(const int &sourc, const int &dest, double w, std::string service) {
+    int cost;
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == nullptr || v2 == nullptr)
@@ -199,4 +200,33 @@ bool Graph::removeVertex(const int &id) {
         }
     }
     return false;
+}
+
+bool Graph::Dijsktra(int source,int dest) {
+    int parent[507]= {-1};
+    int dis[507] = {0};
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int> >, std::greater<std::pair<int, int> > > pq;
+    std::vector<int> dist(vertexSet.size(),INT_MAX);
+    pq.push(std::make_pair(source,0));
+    dist[source] = 0;
+    while(!pq.empty() && pq.top().first != dest){
+        int top = pq.top().first;
+        auto top_v = findVertex(top);
+        pq.pop();
+        for(int i = 0; i <= top_v->getAdj().size()-1; i++){
+            int v = top_v->getAdj().at(i)->getDest()->getId();
+            int weight = top_v->getAdj().at(i)->getCost();
+            if(dist[v]  > dist[top] + weight) {
+                parent[v] = top;
+                dist[v] = dist[top] + weight;
+                pq.push(std::make_pair(v,dist[v]));
+                dis[v] = dist[v];
+            }
+            else{
+                dis[v]= dist[v];
+            }
+        }
+    }
+    return parent;
+
 }

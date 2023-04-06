@@ -63,7 +63,7 @@ protected:
 
 class Edge {
 public:
-    Edge(Vertex *orig, Vertex *dest, double w, std::string service);
+    Edge(Vertex *orig, Vertex *dest, double w, std::string service,int cost);
 
     Vertex * getDest() const;
     double getWeight() const;
@@ -77,6 +77,7 @@ public:
     void setReverse(Edge *reverse);
     void setFlow(double flow);
     bool operator==(Edge* e);
+    int getCost() const;
 protected:
     Vertex * dest; // destination vertex
     double weight; // edge weight, can also be used for capacity
@@ -89,6 +90,7 @@ protected:
     Edge *reverse = nullptr;
 
     double flow; // for flow-related problems
+    int cost;
 
     std::string service;
 };

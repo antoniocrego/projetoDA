@@ -11,7 +11,14 @@ Vertex::Vertex(int id): id(id) {}
  * with a given destination vertex (d) and edge weight (w).
  */
 Edge * Vertex::addEdge(Vertex *d, double w, std::string service) {
-    auto newEdge = new Edge(this, d, w, service);
+    int cost;
+    if(service == "STANDARD") {
+        cost = 2;
+    }
+    else{
+        cost = 4;
+    }
+    auto newEdge = new Edge(this, d, w, service,cost);
     adj.push_back(newEdge);
     d->incoming.push_back(newEdge);
     return newEdge;
@@ -129,7 +136,7 @@ void Vertex::deleteEdge(Edge *edge) {
 
 /********************** Edge  ****************************/
 
-Edge::Edge(Vertex *orig, Vertex *dest, double w, std::string service): orig(orig), dest(dest), weight(w), service(service) {}
+Edge::Edge(Vertex *orig, Vertex *dest, double w, std::string service,int cost): orig(orig), dest(dest), weight(w), service(service), cost(cost) {}
 
 Vertex * Edge::getDest() const {
     return this->dest;
@@ -173,4 +180,8 @@ std::string Edge::getService() const {
 
 bool Edge::operator==(Edge *e) {
     return (orig==e->getOrig()) & (dest==e->getDest());
+}
+
+int Edge::getCost() const{
+    return this->cost;
 }
