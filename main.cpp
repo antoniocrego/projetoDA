@@ -15,9 +15,7 @@ int main(){
     }
     cout << manager.maxArrival("Porto Campanhã");
 
-    for(auto e : network.getVertexSet()){
-        network.Dijsktra(e->getId(),86);
-    }
+    network.Dijsktra(0,83);
     /*string input;
     cout << "Introduz 1 para ver todas as Stations.\nIntroduz 2 para ver todas as Edges da station 3.\n--";
     cin >> input;
