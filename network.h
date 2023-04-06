@@ -61,12 +61,39 @@ public:
     /**
      * @brief Function that calculates the maximum maxflow in the entire railway.
      * @param stationPairs The vector that is going to store our return.
-     * @return The vector stationPairs with the names of the Stations where flow is max.
+     * @return The vector stationPairs with the names of the Stations where flow is max and the value of said maximum flow.
      */
     double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
-    vector<pair<int,string>> multiMaxFlow();
+    /**
+     * @brief Function that calculates the maxFlow passing through a district.
+     * @return A vector with pairs that associate the flow that passes through the district with the district's name.
+     */
+    vector<pair<double,string>> multiMaxFlowDistricts();
+    /**
+     * @brief Function that calculates the maxFlow for each municipality of a given district.
+     * @param district Name of the district whose municipalities will be used.
+     * @return A vector with pairs that associate the flow that passes through the municipality with the municipality's name.
+     */
+    vector<pair<double,string>> multiMaxFlowMunicipalities(const std::string& district);
+    /**
+     * @brief Function that calculates the maxFlow between two stations, assuming that certain edges have been "disabled".
+     * @param source The source station.
+     * @param dest The destination station.
+     * @param segments The edges which are to be removed.
+     * @return The maximum flow value between the two stations in the altered graph.
+     */
     double reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments);
+    /**
+     * @brief Function that calculates the maxFlow for each station once for each edge that indicated to be disabled.
+     * @param segments The edges which are to be removed.
+     * @return Vector that stores pairs that associate a station's ID to its maxFlow before and after removing a specific edge. An entry exists for every edge in the segments unordered set.
+     */
     vector<pair<int,pair<double,double>>> segmentFailureEvaluation(const unordered_set<Edge *>& segments);
+    /**
+     * @brief Calculates how many trains can arrive to one specific station from the entire graph.
+     * @param station The station whose maximum arrival will be calculated.
+     * @return The maximum flow of trains that can arrive to the station in question.
+     */
     double maxArrival(const std::string& station);
 private:
     ///brief Bidirection Graph that represents the connections between Stations.

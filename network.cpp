@@ -140,8 +140,8 @@ double Network::maxFlowPairs(vector<pair<std::string, std::string>>& stationPair
     return currentMax;
 }
 
-vector<pair<int,string>> Network::multiMaxFlow() {
-    vector<pair<int,string>>maxflows;
+vector<pair<double,string>> Network::multiMaxFlowDistricts() {
+    vector<pair<double,string>>maxflows;
     set<string> districts;
     for(auto vertex : this->trainNetwork.getVertexSet()){
         Station station = this->getStationInfo(this->IDtoStation(vertex->getId()));
@@ -151,7 +151,7 @@ vector<pair<int,string>> Network::multiMaxFlow() {
         districts.insert(station.getDistrict());
 
     }
-    for(string district : districts){
+    for(const string& district : districts){
         vector<int> sources;
         vector<int> sinks;
         for(auto vertex : this->trainNetwork.getVertexSet()){
@@ -164,11 +164,43 @@ vector<pair<int,string>> Network::multiMaxFlow() {
         }
         int megaSourceId = this->trainNetwork.megaSource(sources);
         int megaSinkId = this->trainNetwork.megaSink(sinks);
-        int mf = this->trainNetwork.edmondsKarp(megaSourceId,megaSinkId);
+        double mf = this->trainNetwork.edmondsKarp(megaSourceId,megaSinkId);
         this->trainNetwork.removeVertex(megaSourceId);
         this->trainNetwork.removeVertex(megaSinkId);
 
-        maxflows.push_back({mf, district});
+        maxflows.emplace_back(mf, district);
+    }
+    std::sort(maxflows.begin(), maxflows.end());
+    return maxflows;
+}
+
+vector<pair<double,string>> Network::multiMaxFlowMunicipalities(const std::string &district) {
+    vector<pair<double,string>>maxflows;
+    set<string> municipalities;
+    for(auto vertex : this->trainNetwork.getVertexSet()){
+        Station station = this->getStationInfo(this->IDtoStation(vertex->getId()));
+        if(station.getDistrict() == district){
+            municipalities.insert(station.getMunicipality());
+        }
+    }
+    for(const string& munic : municipalities){
+        vector<int> sources;
+        vector<int> sinks;
+        for(auto vertex : this->trainNetwork.getVertexSet()){
+            Station station = this->getStationInfo(this->IDtoStation(vertex->getId()));
+            if(station.getMunicipality() == munic){
+                sinks.push_back(vertex->getId());
+            }else{
+                sources.push_back(vertex->getId());
+            }
+        }
+        int megaSourceId = this->trainNetwork.megaSource(sources);
+        int megaSinkId = this->trainNetwork.megaSink(sinks);
+        double mf = this->trainNetwork.edmondsKarp(megaSourceId,megaSinkId);
+        this->trainNetwork.removeVertex(megaSourceId);
+        this->trainNetwork.removeVertex(megaSinkId);
+
+        maxflows.emplace_back(mf, munic);
     }
     std::sort(maxflows.begin(), maxflows.end());
     return maxflows;
