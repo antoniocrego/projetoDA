@@ -204,9 +204,10 @@ bool Graph::removeVertex(const int &id) {
 
 bool Graph::Dijsktra(int source,int dest) {
     bool r = false;
-    int parent[507],dis[507];
-    std::fill(parent,parent+507,-1);
-    std::fill(dis,dis+507,0);
+    int n = vertexSet.size();
+    int parent[n],dis[n];
+    std::fill(parent,parent+n,-1);
+    std::fill(dis,dis+n,0);
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int> >, std::greater<std::pair<int, int> > > pq;
     std::vector<int> dist(vertexSet.size(),INT_MAX);
     pq.push(std::make_pair(0,source));
