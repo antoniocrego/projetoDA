@@ -2,34 +2,39 @@
 #define AERIALTRANSPORTATION_PROGRAM_H
 
 #include "menu/Menu.h"
-#include "menu/change/ChangeMenu.h"
+#include "network.h"
 #include <string>
 #include <vector>
 #include <iostream>
 
 using namespace std;
 
-class Program
-{
-private:
-    /** @var menu page we are currently in */
-    int currMenuPage;
-
-    /** @var vector of all the program's menus */
-    vector<Menu> menus;
-
-    /** @var program's database where airports, airlines and the flights graph are stored*/
-    Network network;
-
-    void createMainMenu();
-    void createMenuAlpha();
-    void createShowMenu();
-
+class Program {
 public:
     Program();
+    int getCurrentPage()const;
+    void setCurrentPage(int newCurrentpage);
+    void draw();
     void run();
-    bool getMenuOption(int &option, int nButtons);
-    void cleanMenus();
+    void menu();
+    void createMenu();
+    void wait() const;
+    void clear() const;
+
+
+    template<typename type >
+    bool getInput(type &input) const;
+
+private:
+    int currentMenuPage;
+    vector<Menu> menus;
+    Network network;
+    string chooseStation(bool addStopButton);
+    string chooseDistrict(bool addStopButton);
+    string chooseMunicipality(bool addStopButton);
+
+    Edge *chooseEdge(bool addStopButton);
 };
+
 
 #endif

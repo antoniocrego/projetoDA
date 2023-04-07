@@ -1,0 +1,4 @@
+Max Arrival
+Multi Max Flow
+Reduced Edges Max Flow
+Quit

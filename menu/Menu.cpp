@@ -1,83 +1,90 @@
 #include "Menu.h"
 
-/**Constructor of the Menu, reads a file with buttons and adds them to a vector of strings
- * @brief Constructor of the Menu
- * @param path the path to the file containing the buttons of the menu
- */
-Menu::Menu(string path)
-{
-    ifstream file(path);
-    for (string button; getline(file, button);)
-    {
+Menu::Menu(string file_, string title) {
+    this->title = title;
+    ifstream file(file_);
+    for(string button; getline(file,button);){
         this->buttons.push_back(button);
     }
 }
 
-void Menu::clearScreen() const {
-    for(int i = 0; i < 20; i++){
-        cout << '\n';
+Menu::Menu(vector<string> options, string title){
+    this->title = title;
+    for(string option : options){
+        buttons.push_back(option);
     }
 }
 
-/**
- * @brief Adds a MenuItem to the menu's actions
- * @param menuItem
- * complexity O(1)
- */
-void Menu::addMenuItem(MenuItem *menuItem)
-{
-    actions.push_back(menuItem);
+Menu::Menu(unordered_set<string> options, string title){
+    this->title = title;
+    for(string option : options){
+        buttons.push_back(option);
+    }
 }
 
-/**
- * @return buttons
- */
-vector<string> Menu::getButtons()
-{
+vector<string> Menu::getButtons() const {
     return buttons;
 }
 
-/**
- * @brief Draws the menu
- * complexity O(N) being N the number of buttons
- */
-void Menu::draw() const
-{
-    clearScreen();
-    string display;
-    display = " _____________________________________________ \n"
-              "|                     Menu                    |\n"
-              "|_____________________________________________|\n";
+int Menu::getOption() const {
+    return option;
+}
 
-    for (int i = 0; i < this->buttons.size(); i++)
-    {
-        display += "|---------------------------------------------|\n";
-        display += "| [" + to_string(i + 1) + "] " + this->buttons[i];
-        for (int j = 0; j < (39 - this->buttons[i].length()); j++)
-            display += " "; // adding spaces to format the menu
-        if (i < 9)
-            display += ' ';
-        display += "|\n";
+/**Functionality: Setter for the buttons
+ * Description: Receives a vector of string as a parameter and replaces the current buttons of the new ones
+ *
+ * @param  buttons_ a vector of strings
+ */
+void Menu::setButtons(vector<string> buttons_) {
+    this->buttons = buttons_;
+}
+
+void Menu::addButton(string button) {
+    this->buttons.push_back(button);
+}
+
+void Menu::clear() const {
+    for(int i = 0; i < 20; i++){
+        cout << endl;
     }
-    display += "|_____________________________________________|\n";
-    display += "|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|\n";
-    display += "|_____________________________________________|\n";
-    cout << display << endl;
 }
 
-/**
- * @brief Will execute the action corresponding to the option chosen
- * @param option option chosen
+/**Functionality:Draw a menu
+ *
+ * Description:This function will get the attribute of the Menu buttons and will go through all of them printing them in a pleasant way
+ * it will also ask the user for a input however it will not handle the user input.
+ *
  */
-void Menu::doAction(int option)
-{
-    actions[option]->execute();
-}
+void Menu::draw(){
+    string o;
+    clear();
+    string display;
+    display =" _____________________________________________ \n"
+             "|<<<<<<<<<<<<<<<<<>  Menu  <>>>>>>>>>>>>>>>>>>|\n"
+             "|---------------------------------------------|\n";
+    display+= "| "+title+"     ";
+    for(int j=0; j<(39-this->title.length());j++) display+=" "; //adding spaces to format the menu
+    display+="|\n";
+    display += "|---------------------------------------------|\n";
 
-/**
- * @return the actions of the menu
- */
-vector<MenuItem *> Menu::getActions()
-{
-    return actions;
+    for(int i=0; i<this->buttons.size();i++){
+        display+="| ["+to_string(i+1)+"] "+this->buttons[i];
+        for(int j=0; j<(39-this->buttons[i].length());j++) display+=" "; //adding spaces to format the menu
+        if(i<9) display+=' ';
+        display+="|\n";
+    }
+    display+="|_____________________________________________|\n";
+    cout << display <<endl;
+    cout << "Choose an option: ";
+    while (true){
+        cin >> o;
+        try {
+            option = stoi(o);
+            if(option >= 1 and option <= buttons.size()) break;
+            cout << "\nInvalid option! Please introduce a valid one: ";
+        }
+        catch (std::invalid_argument ia){
+            cout << "\nInvalid option! Please introduce a valid one: ";
+        }
+    }
 }

@@ -44,6 +44,8 @@ void Network::readNetwork() {
 }
 
 void Network::readStations() {
+    set<string> seenDistricts;
+    set<string> seenMunicipalities;
     ifstream in("../data/stations.csv");
     string aLine, name, district, municipality, township, line, trash;
     getline(in, aLine);
@@ -81,6 +83,14 @@ void Network::readStations() {
         }
         else getline(inn, line, ',');
         Station station = Station(name,district,municipality,township,line);
+        if(seenDistricts.find(district) == seenDistricts.end()) {
+            districts.push_back(district);
+            seenDistricts.insert(district);
+        }
+        if(seenMunicipalities.find(municipality) == seenMunicipalities.end()) {
+            municipalities.push_back({district,municipality});
+            seenMunicipalities.insert(municipality);
+        }
         stationInfo.insert({name,station});
         stationToID.insert({name,stationToID.size()});
         trainNetwork.addVertex(stationToID.size()-1);
@@ -281,4 +291,16 @@ double Network::maxArrival(const std::string& station){
     double result = this->trainNetwork.edmondsKarp(sourceId, stationID);
     this->trainNetwork.removeVertex(sourceId);
     return result;
+}
+
+vector<pair<string,string>> Network::getMunicipalities(){
+    return this->municipalities;
+}
+
+vector<string> Network::getDistricts(){
+    return this->districts;
+}
+
+unordered_map<string,Station> Network::getStations(){
+    return this->stationInfo;
 }

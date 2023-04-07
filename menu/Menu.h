@@ -1,31 +1,29 @@
-#ifndef AERIALTRANSPORTATION_MENU_H
-#define AERIALTRANSPORTATION_MENU_H
+#ifndef PROJETO_SCHEDULE_MENU_H
+#define PROJETO_SCHEDULE_MENU_H
 
 #include <vector>
-#include <string>
 #include <fstream>
 #include <iostream>
-#include "MenuItem.h"
+#include <unordered_set>
 
 using namespace std;
 
-class Menu
-{
-private:
-    /** @var buttons to be printed by the menu */
-    vector<string> buttons;
-
-    /** @var action to be taken when a certain option of the menu is chosen */
-    vector<MenuItem *> actions;
-
+class Menu {
 public:
-    Menu(string path);
-    vector<string> getButtons();
-    void draw() const;
-    void addMenuItem(MenuItem *menuItem);
-    void doAction(int option);
-    vector<MenuItem *> getActions();
-    void clearScreen() const;
+    Menu(string file_, string title);
+    Menu(vector<string> options, string title);
+    Menu(unordered_set<string> options, string title);
+    vector<string> getButtons() const;
+    int getOption() const;
+    void addButton(string button);
+    void setButtons(vector<string> buttons_);
+    void draw();
+    void clear() const;
+private:
+    vector<string> buttons;
+    int option;
+    string title;
 };
 
-#endif
+
+#endif //PROJETO_SCHEDULE_MENU_H

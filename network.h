@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include <unordered_set>
+
 using namespace std;
 
 class Network {
@@ -23,8 +24,10 @@ public:
     Graph getTrainNetwork();
     string IDtoStation(int id);
     Station getStationInfo(string name);
+    unordered_map<string,Station> getStations();
     int getStationID(const string& name);
-
+    vector<string> getDistricts();
+    vector<pair<string,string>> getMunicipalities();
     double maxFlow(const std::string& source, const std::string& dest);
     double maxFlowPairs(vector<pair<std::string, std::string>>& stationPairs);
     vector<pair<int,string>> multiMaxFlow();
@@ -34,6 +37,8 @@ public:
 private:
     Graph trainNetwork;
     Graph bdTrainNetwork;
+    vector<string> districts;
+    vector<pair<string, string>> municipalities;
     unordered_map<string,Station> stationInfo;
     unordered_map<string,int> stationToID;
 };
