@@ -1,5 +1,3 @@
-// By: Gonçalo Leão
-
 #include "Graph.h"
 
 int Graph::getNumVertex() const {
@@ -203,14 +201,17 @@ bool Graph::removeVertex(const int &id) {
 }
 
 bool Graph::Dijsktra(int source,int dest) {
-    int parent[507]= {-1};
-    int dis[507] = {0};
+    bool r = false;
+    int n = vertexSet.size();
+    int parent[n],dis[n];
+    std::fill(parent,parent+n,-1);
+    std::fill(dis,dis+n,0);
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int> >, std::greater<std::pair<int, int> > > pq;
     std::vector<int> dist(vertexSet.size(),INT_MAX);
-    pq.push(std::make_pair(source,0));
+    pq.push(std::make_pair(0,source));
     dist[source] = 0;
-    while(!pq.empty() && pq.top().first != dest){
-        int top = pq.top().first;
+    while(pq.top().second != dest && !pq.empty()){
+        int top = pq.top().second;
         auto top_v = findVertex(top);
         pq.pop();
         for(int i = 0; i <= top_v->getAdj().size()-1; i++){
@@ -219,14 +220,15 @@ bool Graph::Dijsktra(int source,int dest) {
             if(dist[v]  > dist[top] + weight) {
                 parent[v] = top;
                 dist[v] = dist[top] + weight;
-                pq.push(std::make_pair(v,dist[v]));
+                pq.push(std::make_pair(dist[v],v));
                 dis[v] = dist[v];
+                r = true;
             }
             else{
                 dis[v]= dist[v];
             }
         }
     }
-    return parent;
+    return r;
 
 }
