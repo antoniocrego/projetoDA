@@ -105,6 +105,9 @@ void Program::menu() {
                     wait();
                     break;
                 case 4:
+                    this->network = Network();
+                    break;
+                case 5:
                     this->currentMenuPage = -1;
                     break;
             }
