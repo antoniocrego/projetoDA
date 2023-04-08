@@ -92,7 +92,7 @@ public:
      * @param segments The edges which are to be removed.
      * @return Vector that stores pairs that associate a station's ID to its maxFlow before and after removing a specific edge. An entry exists for every edge in the segments unordered set.
      */
-    vector<pair<int,pair<double,double>>> segmentFailureEvaluation(const unordered_set<Edge *>& segments);
+    vector<pair<int,pair<double,double>>> segmentFailureEvaluation(const vector<Edge *>& segments);
     /**
      * @brief Calculates how many trains can arrive to one specific station from the entire graph.
      * @param station The station whose maximum arrival will be calculated.

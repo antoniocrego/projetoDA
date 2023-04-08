@@ -148,22 +148,22 @@ void Graph::augmentFlowAlongPath(Vertex *s, Vertex *t, double f) {
 
 double Graph::edmondsKarp(int source, int target) {
     double maxFlow = 0;
-    Vertex* s = findVertex(source);
-    Vertex* t = findVertex(target);
+    Vertex *s = findVertex(source);
+    Vertex *t = findVertex(target);
     if (s == nullptr || t == nullptr || s == t)
         throw std::logic_error("Invalid source and/or target vertex");
 
     // Reset the flows
-    for (auto v : vertexSet) {
+    for (auto v: vertexSet) {
         for (auto e: v->getAdj()) {
             e->setFlow(0);
         }
     }
     // Loop to find augmentation paths
-    while( findAugmentingPath(s, t) ) {
+    while (findAugmentingPath(s, t)) {
         double f = findMinResidualAlongPath(s, t);
         augmentFlowAlongPath(s, t, f);
-        maxFlow+=f;
+        maxFlow += f;
     }
     return maxFlow;
 }
@@ -200,8 +200,7 @@ bool Graph::removeVertex(const int &id) {
     return false;
 }
 
-bool Graph::Dijsktra(int source,int dest) {
-    bool r = false;
+std::pair<int,double> Graph::Dijsktra(int source,int dest) {
     int n = vertexSet.size();
     int parent[n],dis[n];
     std::fill(parent,parent+n,-1);
@@ -222,13 +221,28 @@ bool Graph::Dijsktra(int source,int dest) {
                 dist[v] = dist[top] + weight;
                 pq.push(std::make_pair(dist[v],v));
                 dis[v] = dist[v];
-                r = true;
             }
             else{
                 dis[v]= dist[v];
             }
         }
     }
-    return r;
 
+    double maxFlow=INF;
+    Vertex * v = findVertex(dest);
+    while (v->getId()!=source){
+        for (auto e : v->getAdj()){
+            if (e->getDest()->getId()==parent[v->getId()]){
+                v=findVertex(parent[v->getId()]);
+                if (e->getWeight()<maxFlow) maxFlow=e->getWeight();
+            }
+        }
+        for (auto e : v->getIncoming()){
+            if (e->getOrig()->getId()==parent[v->getId()]){
+                v=findVertex(parent[v->getId()]);
+                if (e->getWeight()<maxFlow) maxFlow=e->getWeight();
+            }
+        }
+    }
+    return {dis[dest],maxFlow};
 }

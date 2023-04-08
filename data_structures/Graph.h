@@ -45,7 +45,7 @@ public:
     double findMinResidualAlongPath(Vertex *s, Vertex *t);
     void augmentFlowAlongPath(Vertex *s, Vertex *t, double f);
     double edmondsKarp(int source, int target);
-    bool Dijsktra(int source,int dest);
+    std::pair<int,double> Dijsktra(int source,int dest);
 protected:
     std::vector<Vertex *> vertexSet;    // vertex set
 

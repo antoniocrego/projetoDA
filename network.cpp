@@ -138,7 +138,7 @@ double Network::maxFlowPairs(vector<pair<std::string, std::string>>& stationPair
     for (int i = 0; i<stationToID.size(); i++){
         for (int j=i; j<stationToID.size(); j++){
             if (i==j) continue;
-            iterationFlow= maxFlow(IDtoStation(i), IDtoStation(j));
+            iterationFlow= trainNetwork.edmondsKarp(i,j);
             if (iterationFlow>currentMax){
                 currentMax=iterationFlow;
                 stationPairs.clear();
@@ -266,7 +266,7 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     return reducedConnectivity.edmondsKarp(srcID,destID);
 }
 
-vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const unordered_set<Edge *>& segments) {
+vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
     vector<int> megaSink;
     vector<pair<int,pair<double,double>>> stationBeforeAfter;
     pair<double,double> beforeAndAfter;

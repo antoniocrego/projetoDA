@@ -64,32 +64,67 @@ void Program::menu() {
     string station2 = "";
     vector<pair<string, string>> pairs;
     unordered_set<Edge *> segments;
+    vector<Edge *> segments2;
     Edge * segment;
-    double pairsMaxFlow;
-    double maxArrival;
+    double returnValue;
+    vector<pair<int,pair<double,double>>> specialReturn;
+    vector<pair<int,double>> temp;
+    pair<int,double> dijkstra;
+    vector<pair<double,string>> flowByDistrict;
     switch (this->currentMenuPage) {
         case 0: // Is on main menu
             switch (option) {
-                case 1: //option show was selected, changing to submenu show
+                case 1:
+                    station1 = chooseStation(false);
+                    station2 = chooseStation(false);
+                    clear();
+                    returnValue = network.maxFlow(station1,station2);
+                    cout << "The maximum flow between " << station1 << " and " << station2 << " is " << returnValue << ".\n";
+                    this->wait();
+                    currentMenuPage=0;
+                    break;
+                case 2: //option show was selected, changing to submenu show
                     station1 = chooseStation(false);
                     clear();
-                    maxArrival = this->network.maxArrival(station1);
-                    cout << station1 << " Max Arrival: " << maxArrival << endl;
+                    returnValue = this->network.maxArrival(station1);
+                    cout << station1 << " Max Arrival: " << returnValue << endl;
                     this->wait();
                     currentMenuPage = 0;
                     break;
-                case 2:
-                    pairsMaxFlow = this->network.maxFlowPairs(pairs);
-                    clear();
-                    cout << "Max Flow Pairs in the whole Network:\n";
-                    for (auto pair: pairs) {
-                        cout << pair.first << " & " << pair.second << endl;
-                    }
-                    cout << "Max Flow: " << pairsMaxFlow << endl;
-                    currentMenuPage = 0;
-                    wait();
-                    break;
                 case 3:
+                    clear();
+                    returnValue = this->network.maxFlowPairs(pairs);
+                    cout << "The highest flow between stations in the network is " << returnValue << " for the following stations:\n";
+                    for (auto pair: pairs) {
+                        cout << "\t" << pair.first << " & " << pair.second << endl;
+                    }
+                    this->wait();
+                    currentMenuPage = 0;
+                    break;
+                case 4:
+                    clear();
+                    flowByDistrict = this->network.multiMaxFlowDistricts();
+                    std::sort(flowByDistrict.begin(), flowByDistrict.end(), [](const pair<double,string>& a, const pair<double,string>& b) -> bool{return a.first<b.first;});
+                    cout << "From highest transportation need (lowest flow), to lowest need (highest flow):" << endl;
+                    for (int i = 1; i<=flowByDistrict.size(); i++){
+                        cout << "\t[" << i << "] " << flowByDistrict.at(i-1).second << " - " << flowByDistrict.at(i-1).first << endl;
+                    }
+                    this->wait();
+                    currentMenuPage = 0;
+                    break;
+                case 5:
+                    station1 = chooseDistrict(false);
+                    clear();
+                    flowByDistrict = this->network.multiMaxFlowMunicipalities(station1);
+                    std::sort(flowByDistrict.begin(), flowByDistrict.end(), [](const pair<double,string>& a, const pair<double,string>& b) -> bool{return a.first<b.first;});
+                    cout << "From highest transportation need (lowest flow), to lowest need (highest flow) in the district of " << station1 << ":" << endl;
+                    for (int i = 1; i<=flowByDistrict.size(); i++){
+                        cout << "\t[" << i << "] " << flowByDistrict.at(i-1).second << " - " << flowByDistrict.at(i-1).first << endl;
+                    }
+                    this->wait();
+                    currentMenuPage = 0;
+                    break;
+                case 6:
                     station1 = chooseStation(false);
                     station2 = chooseStation(false);
                     while (true){
@@ -98,16 +133,48 @@ void Program::menu() {
                         segments.insert(segment);
                     }
                     clear();
-                    maxArrival = this->network.reducedEdgesMaxFlow(station1, station2, segments);
-                    cout << "The Max Flow between " << station1 << " and " << station2 << " without the selected edges:" << endl;
-                    cout << maxArrival;
+                    returnValue = this->network.reducedEdgesMaxFlow(station1, station2, segments);
+                    cout << "The maximum flow between " << station1 << " and " << station2 << " without the selected edges is" << returnValue << "." << endl;
+                    this->wait();
                     currentMenuPage = 0;
-                    wait();
                     break;
-                case 4:
+                case 7:
+                    while (true){
+                        segment = chooseEdge(true);
+                        if(segment == NULL) break;
+                        segments2.push_back(segment);
+                    }
+                    clear();
+                    specialReturn = this->network.segmentFailureEvaluation(segments2);
+                    for (int i = 0; i<segments2.size();i++) {
+                        for (int j = i; j < specialReturn.size(); j += segments2.size()) {
+                            temp.emplace_back(specialReturn.at(j).first,
+                                              specialReturn.at(j).second.first - specialReturn.at(j).second.second);
+                        }
+                        cout << "For the failure of segment: " << network.IDtoStation(segments2.at(i)->getOrig()->getId()) << " <-> " << network.IDtoStation(segments2.at(i)->getDest()->getId()) << endl;
+                        std::sort(temp.begin(), temp.end(), [](const pair<int,double>& a, const pair<int,double>& b) -> bool{return a.second>b.second;});
+                        for (int cnt = 1; cnt<=10; cnt++){
+                            cout << "\t[" << cnt << "]" << network.IDtoStation(temp.at(cnt-1).first) << " - " << temp.at(cnt-1).second << endl;
+                        }
+                        temp.clear();
+                        cout << endl;
+                    }
+                    this->wait();
+                    currentMenuPage=0;
+                    break;
+                case 8:
+                    station1 = chooseStation(false);
+                    station2 = chooseStation(false);
+                    clear();
+                    dijkstra = network.getTrainNetwork().Dijsktra(network.getStationID(station1),network.getStationID(station2));
+                    cout << "For the cheapest cost of " << dijkstra.first << "€, there is a maximum flow of " << dijkstra.second << " in between " << station1 << " and " << station2 << ".\n";
+                    this->wait();
+                    currentMenuPage=0;
+                    break;
+                case 9:
                     this->network = Network();
                     break;
-                case 5:
+                case 0:
                     this->currentMenuPage = -1;
                     break;
             }
