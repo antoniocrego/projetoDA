@@ -266,7 +266,7 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     return reducedConnectivity.edmondsKarp(srcID,destID);
 }
 
-vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
+/*vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
     vector<int> megaSink;
     vector<pair<int,pair<double,double>>> stationBeforeAfter;
     pair<double,double> beforeAndAfter;
@@ -296,6 +296,44 @@ vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const ve
         reducedConnectivity.addEdge(v1->getId(),megaSinkID,INF,"");
     }
     reducedConnectivity.removeVertex(megaSinkID);
+    return stationBeforeAfter;
+}*/
+
+vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
+    vector<pair<int,pair<double,double>>> stationBeforeAfter;
+    pair<double,double> beforeAndAfter;
+    Graph reducedConnectivity;
+    for (Vertex* v: trainNetwork.getVertexSet()){
+        reducedConnectivity.addVertex(v->getId());
+    }
+    for (Vertex* v: trainNetwork.getVertexSet()){
+        for (Edge * e : v->getAdj()){
+            reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
+        }
+    }
+    double iterationFlow;
+    for (int i = 0; i<stationToID.size(); i++){
+        iterationFlow=0;
+        for (int j=0; j<stationToID.size(); j++){
+            if (i==j) continue;
+            iterationFlow+=trainNetwork.edmondsKarp(i,j);
+        }
+        beforeAndAfter = {iterationFlow/(trainNetwork.getNumVertex()-1),0};
+        for (int k=0; k<segments.size();k++) stationBeforeAfter.emplace_back(i,beforeAndAfter);
+    }
+    for (int m = 0; m<segments.size(); m++) {
+        reducedConnectivity.getVertexSet().at(segments.at(m)->getOrig()->getId())->removeEdge(segments.at(m)->getDest()->getId());
+        reducedConnectivity.getVertexSet().at(segments.at(m)->getDest()->getId())->removeEdge(segments.at(m)->getOrig()->getId());
+        for (int i = 0; i < stationToID.size(); i++) {
+            iterationFlow=0;
+            for (int j = 0; j < stationToID.size(); j++) {
+                if (i == j) continue;
+                iterationFlow+=reducedConnectivity.edmondsKarp(i,j);
+            }
+            stationBeforeAfter.at((i*segments.size())+m).second.second=iterationFlow/(trainNetwork.getNumVertex()-1);
+        }
+        reducedConnectivity.addBidirectionalEdge(segments.at(m)->getOrig()->getId(),segments.at(m)->getDest()->getId(),segments.at(m)->getWeight(),segments.at(m)->getService());
+    }
     return stationBeforeAfter;
 }
 

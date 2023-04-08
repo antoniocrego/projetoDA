@@ -71,6 +71,8 @@ void Program::menu() {
     vector<pair<int,double>> temp;
     pair<int,double> dijkstra;
     vector<pair<double,string>> flowByDistrict;
+    string o;
+    int maxDisplay;
     switch (this->currentMenuPage) {
         case 0: // Is on main menu
             switch (option) {
@@ -144,18 +146,34 @@ void Program::menu() {
                         if(segment == NULL) break;
                         segments2.push_back(segment);
                     }
+                    if (segments2.empty()) break;
+                    cout << "Choose a number of stations up to " << network.getTrainNetwork().getNumVertex() << " to display per segment: ";
+                    while (true){
+                        cin >> o;
+                        try {
+                            maxDisplay = stoi(o);
+                            if(maxDisplay >= 1 and maxDisplay<= network.getTrainNetwork().getNumVertex()) break;
+                            cout << "\nInvalid option! Please introduce a valid one: ";
+                        }
+                        catch (std::invalid_argument ia){
+                            cout << "\nInvalid option! Please introduce a valid one: ";
+                        }
+                    }
                     clear();
                     specialReturn = this->network.segmentFailureEvaluation(segments2);
                     for (int i = 0; i<segments2.size();i++) {
+                        returnValue=0.0;
                         for (int j = i; j < specialReturn.size(); j += segments2.size()) {
                             temp.emplace_back(specialReturn.at(j).first,
                                               specialReturn.at(j).second.first - specialReturn.at(j).second.second);
+                            if (temp.at(temp.size()-1).second!=0) returnValue++;
                         }
                         cout << "For the failure of segment: " << network.IDtoStation(segments2.at(i)->getOrig()->getId()) << " <-> " << network.IDtoStation(segments2.at(i)->getDest()->getId()) << endl;
                         std::sort(temp.begin(), temp.end(), [](const pair<int,double>& a, const pair<int,double>& b) -> bool{return a.second>b.second;});
-                        for (int cnt = 1; cnt<=10; cnt++){
-                            cout << "\t[" << cnt << "] " << network.IDtoStation(temp.at(cnt-1).first) << " | there is a loss of " << temp.at(cnt-1).second << " flow" << endl;
+                        for (int cnt = 1; cnt<=maxDisplay; cnt++){
+                            cout << "\t[" << cnt << "] " << network.IDtoStation(temp.at(cnt-1).first) << " | " << std::ceil(temp.at(cnt-1).second*100.0)/100.0 << " flow is lost on average | " << std::ceil(specialReturn.at(i+segments2.size()*temp.at(cnt-1).first).second.first*100.0)/100.0 << "-" << std::ceil(specialReturn.at(i+segments2.size()*temp.at(cnt-1).first).second.second*100.0)/100.0 << endl;
                         }
+                        cout << "This failure affects " << std::ceil((returnValue/network.getTrainNetwork().getNumVertex())*100.0*100.0) / 100.0 << "% of all stations.\n";
                         temp.clear();
                         cout << endl;
                     }
