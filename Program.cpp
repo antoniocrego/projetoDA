@@ -134,7 +134,7 @@ void Program::menu() {
                     }
                     clear();
                     returnValue = this->network.reducedEdgesMaxFlow(station1, station2, segments);
-                    cout << "The maximum flow between " << station1 << " and " << station2 << " without the selected edges is" << returnValue << "." << endl;
+                    cout << "The maximum flow between " << station1 << " and " << station2 << " without the selected edges is " << returnValue << "." << endl;
                     this->wait();
                     currentMenuPage = 0;
                     break;
@@ -154,7 +154,7 @@ void Program::menu() {
                         cout << "For the failure of segment: " << network.IDtoStation(segments2.at(i)->getOrig()->getId()) << " <-> " << network.IDtoStation(segments2.at(i)->getDest()->getId()) << endl;
                         std::sort(temp.begin(), temp.end(), [](const pair<int,double>& a, const pair<int,double>& b) -> bool{return a.second>b.second;});
                         for (int cnt = 1; cnt<=10; cnt++){
-                            cout << "\t[" << cnt << "]" << network.IDtoStation(temp.at(cnt-1).first) << " - " << temp.at(cnt-1).second << endl;
+                            cout << "\t[" << cnt << "] " << network.IDtoStation(temp.at(cnt-1).first) << " | there is a loss of " << temp.at(cnt-1).second << " flow" << endl;
                         }
                         temp.clear();
                         cout << endl;
