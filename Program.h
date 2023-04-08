@@ -29,11 +29,11 @@ private:
     int currentMenuPage;
     vector<Menu> menus;
     Network network;
-    string chooseStation(bool addStopButton);
-    string chooseDistrict(bool addStopButton);
-    string chooseMunicipality(bool addStopButton);
+    string chooseStation(bool addStopButton, string label = "");
+    string chooseDistrict(bool addStopButton, string label = "");
+    string chooseMunicipality(bool addStopButton, string label = "");
 
-    Edge *chooseEdge(bool addStopButton);
+    Edge *chooseEdge(bool addStopButton, string label = "");
 };
 
 

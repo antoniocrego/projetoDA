@@ -75,16 +75,16 @@ void Program::menu() {
         case 0: // Is on main menu
             switch (option) {
                 case 1:
-                    station1 = chooseStation(false);
-                    station2 = chooseStation(false);
+                    station1 = chooseStation(false,"the origin station");
+                    station2 = chooseStation(false, "the destination station");
                     clear();
                     returnValue = network.maxFlow(station1,station2);
                     cout << "The maximum flow between " << station1 << " and " << station2 << " is " << returnValue << ".\n";
                     this->wait();
                     currentMenuPage=0;
                     break;
-                case 2: //option show was selected, changing to submenu show
-                    station1 = chooseStation(false);
+                case 2:
+                    station1 = chooseStation(false, "the station to evaluate");
                     clear();
                     returnValue = this->network.maxArrival(station1);
                     cout << station1 << " Max Arrival: " << returnValue << endl;
@@ -113,7 +113,7 @@ void Program::menu() {
                     currentMenuPage = 0;
                     break;
                 case 5:
-                    station1 = chooseDistrict(false);
+                    station1 = chooseDistrict(false, "the district to evaluate");
                     clear();
                     flowByDistrict = this->network.multiMaxFlowMunicipalities(station1);
                     std::sort(flowByDistrict.begin(), flowByDistrict.end(), [](const pair<double,string>& a, const pair<double,string>& b) -> bool{return a.first<b.first;});
@@ -125,10 +125,10 @@ void Program::menu() {
                     currentMenuPage = 0;
                     break;
                 case 6:
-                    station1 = chooseStation(false);
-                    station2 = chooseStation(false);
+                    station1 = chooseStation(false, "the origin station");
+                    station2 = chooseStation(false, "the destination station");
                     while (true){
-                        segment = chooseEdge(true);
+                        segment = chooseEdge(true, "the edge to be removed");
                         if(segment == NULL) break;
                         segments.insert(segment);
                     }
@@ -140,7 +140,7 @@ void Program::menu() {
                     break;
                 case 7:
                     while (true){
-                        segment = chooseEdge(true);
+                        segment = chooseEdge(true, "the edge to be removed");
                         if(segment == NULL) break;
                         segments2.push_back(segment);
                     }
@@ -163,10 +163,15 @@ void Program::menu() {
                     currentMenuPage=0;
                     break;
                 case 8:
-                    station1 = chooseStation(false);
-                    station2 = chooseStation(false);
+                    station1 = chooseStation(false, "the origin station");
+                    station2 = chooseStation(false, "the destination station");
                     clear();
                     dijkstra = network.getTrainNetwork().Dijsktra(network.getStationID(station1),network.getStationID(station2));
+                    if(dijkstra.first == -1){
+                        cout << "There is no path from " << station1 << " to " << station2 << ".\n";
+                        this->wait();
+                        break;
+                    }
                     cout << "For the cheapest cost of " << dijkstra.first << "€, there is a maximum flow of " << dijkstra.second << " in between " << station1 << " and " << station2 << ".\n";
                     this->wait();
                     currentMenuPage=0;
@@ -174,7 +179,7 @@ void Program::menu() {
                 case 9:
                     this->network = Network();
                     break;
-                case 0:
+                case 10:
                     this->currentMenuPage = -1;
                     break;
             }
@@ -182,9 +187,9 @@ void Program::menu() {
     }
 }
 
-string Program::chooseDistrict(bool addStopButton){
+string Program::chooseDistrict(bool addStopButton, string label){
     int previousMenuPage = currentMenuPage;
-    this->menus.push_back(Menu(network.getDistricts(), "Districts"));// Initialize districts submenu
+    this->menus.push_back(Menu(network.getDistricts(), "Districts", label));// Initialize districts submenu
     currentMenuPage = menus.size() - 1;
     if(addStopButton) menus.at(currentMenuPage).addButton("Stop");
     draw();
@@ -196,8 +201,9 @@ string Program::chooseDistrict(bool addStopButton){
     return district;
 }
 
-string Program::chooseMunicipality(bool addStopButton) {
-    string district = chooseDistrict(false);
+string Program::chooseMunicipality(bool addStopButton, string label) {
+    string district = chooseDistrict(addStopButton,label);
+    if(district == "quit") return "quit";
     int previousMenuPage = currentMenuPage;
     vector<string> municipalities;
     for(pair<string,string> pair : this->network.getMunicipalities()){
@@ -205,7 +211,7 @@ string Program::chooseMunicipality(bool addStopButton) {
             municipalities.push_back(pair.second);
         }
     }
-    this->menus.push_back(Menu(municipalities, "Municipalities"));// Initialize districts submenu
+    this->menus.push_back(Menu(municipalities, "Municipalities", label));// Initialize districts submenu
     currentMenuPage = menus.size() - 1;
     if(addStopButton) menus.at(currentMenuPage).addButton("Stop");
     draw();
@@ -217,8 +223,9 @@ string Program::chooseMunicipality(bool addStopButton) {
     return municipality;
 }
 
-string Program::chooseStation(bool addStopButton) {
-    string municipality = chooseMunicipality(false);
+string Program::chooseStation(bool addStopButton, string label) {
+    string municipality = chooseMunicipality(addStopButton, label);
+    if(municipality == "quit") return "quit";
     int previousMenuPage = currentMenuPage;
     vector<string> stations;
     for(auto pair : this->network.getStations()){
@@ -227,7 +234,7 @@ string Program::chooseStation(bool addStopButton) {
             stations.push_back(station.getName());
         }
     }
-    menus.push_back(Menu(stations, "Stations"));
+    menus.push_back(Menu(stations, "Stations", label));
     currentMenuPage = menus.size()-1;
     if(addStopButton) menus.at(currentMenuPage).addButton("Stop");
     draw();
@@ -239,8 +246,9 @@ string Program::chooseStation(bool addStopButton) {
     return stationName;
 }
 
-Edge * Program::chooseEdge(bool addStopButton) {
-    string source = chooseStation(false);
+Edge * Program::chooseEdge(bool addStopButton, string label) {
+    string source = chooseStation(addStopButton, label);
+    if(source == "quit") return NULL;
     int sourceId = this->network.getStationID(source);
     int previousMenuPage = currentMenuPage;
     vector<string> destStations;
@@ -249,7 +257,7 @@ Edge * Program::chooseEdge(bool addStopButton) {
         string destStation = this->network.IDtoStation(edge->getDest()->getId());
         destStations.push_back(destStation);
     }
-    menus.push_back(Menu(destStations, "Adjacent Stations"));
+    menus.push_back(Menu(destStations, "Adjacent Stations", label));
     currentMenuPage = menus.size()-1;
     if(addStopButton) menus.at(currentMenuPage).addButton("Stop");
     draw();

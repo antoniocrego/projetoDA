@@ -11,8 +11,8 @@ using namespace std;
 class Menu {
 public:
     Menu(string file_, string title);
-    Menu(vector<string> options, string title);
-    Menu(unordered_set<string> options, string title);
+    Menu(vector<string> options, string title, string inputLabel = "");
+    Menu(unordered_set<string> options, string title, string inputLabel = "");
     vector<string> getButtons() const;
     int getOption() const;
     void addButton(string button);
@@ -23,6 +23,7 @@ private:
     vector<string> buttons;
     int option;
     string title;
+    string inputLabel;
 };
 
 

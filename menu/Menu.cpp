@@ -8,15 +8,17 @@ Menu::Menu(string file_, string title) {
     }
 }
 
-Menu::Menu(vector<string> options, string title){
+Menu::Menu(vector<string> options, string title, string inputLabel){
     this->title = title;
+    this->inputLabel = inputLabel;
     for(string option : options){
         buttons.push_back(option);
     }
 }
 
-Menu::Menu(unordered_set<string> options, string title){
+Menu::Menu(unordered_set<string> options, string title, string inputLabel){
     this->title = title;
+    this->inputLabel = inputLabel;
     for(string option : options){
         buttons.push_back(option);
     }
@@ -75,6 +77,7 @@ void Menu::draw(){
     }
     display+="|_____________________________________________|\n";
     cout << display <<endl;
+    if(inputLabel != "") cout << "Selecting " <<inputLabel << endl;
     cout << "Choose an option: ";
     while (true){
         cin >> o;

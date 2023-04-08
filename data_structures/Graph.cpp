@@ -229,20 +229,23 @@ std::pair<int,double> Graph::Dijsktra(int source,int dest) {
     }
 
     double maxFlow=INF;
-    Vertex * v = findVertex(dest);
-    while (v->getId()!=source){
-        for (auto e : v->getAdj()){
-            if (e->getDest()->getId()==parent[v->getId()]){
-                v=findVertex(parent[v->getId()]);
-                if (e->getWeight()<maxFlow) maxFlow=e->getWeight();
+    if (parent[dest]!=-1) {
+        Vertex * v = findVertex(dest);
+        while (v->getId() != source) {
+            for (auto e: v->getAdj()) {
+                if (e->getDest()->getId() == parent[v->getId()]) {
+                    v = findVertex(parent[v->getId()]);
+                    if (e->getWeight() < maxFlow) maxFlow = e->getWeight();
+                }
             }
-        }
-        for (auto e : v->getIncoming()){
-            if (e->getOrig()->getId()==parent[v->getId()]){
-                v=findVertex(parent[v->getId()]);
-                if (e->getWeight()<maxFlow) maxFlow=e->getWeight();
+            for (auto e: v->getIncoming()) {
+                if (e->getOrig()->getId() == parent[v->getId()]) {
+                    v = findVertex(parent[v->getId()]);
+                    if (e->getWeight() < maxFlow) maxFlow = e->getWeight();
+                }
             }
         }
     }
+    else return {-1,-1};
     return {dis[dest],maxFlow};
 }
