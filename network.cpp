@@ -105,11 +105,10 @@ string Network::IDtoStation(int id) {
     for(const auto& c : stationToID){
         if (c.second==id) return c.first;
     }
-    return "Notfound";
+    return "Station not found";
 }
 
 double Network::maxFlow(const std::string& source, const std::string& dest){
-    double maxFlow = 0;
     int srcID;
     int destID;
     try {
@@ -152,16 +151,8 @@ double Network::maxFlowPairs(vector<pair<std::string, std::string>>& stationPair
 
 vector<pair<double,string>> Network::multiMaxFlowDistricts() {
     vector<pair<double,string>>maxflows;
-    set<string> districts;
-    for(auto vertex : this->trainNetwork.getVertexSet()){
-        Station station = this->getStationInfo(this->IDtoStation(vertex->getId()));
-        if(station.getDistrict() == ""){
-            continue;
-        }
-        districts.insert(station.getDistrict());
 
-    }
-    for(const string& district : districts){
+    for(const string& district : this->districts){
         vector<int> sources;
         vector<int> sinks;
         for(auto vertex : this->trainNetwork.getVertexSet()){
@@ -186,11 +177,10 @@ vector<pair<double,string>> Network::multiMaxFlowDistricts() {
 
 vector<pair<double,string>> Network::multiMaxFlowMunicipalities(const std::string &district) {
     vector<pair<double,string>>maxflows;
-    set<string> municipalities;
-    for(auto vertex : this->trainNetwork.getVertexSet()){
-        Station station = this->getStationInfo(this->IDtoStation(vertex->getId()));
-        if(station.getDistrict() == district){
-            municipalities.insert(station.getMunicipality());
+    vector<string> municipalities;
+    for(auto pair : this->municipalities){
+        if(pair.first == district){
+            municipalities.push_back(pair.second);
         }
     }
     for(const string& munic : municipalities){
@@ -216,32 +206,6 @@ vector<pair<double,string>> Network::multiMaxFlowMunicipalities(const std::strin
     return maxflows;
 }
 
-/*double Network::reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments){
-    queue<int> toDelete;
-    Graph reducedConnectivity = Graph(trainNetwork);
-    for (Vertex* v : reducedConnectivity.getVertexSet()){
-        for (Edge* e : v->getAdj()){
-            if (segments.find(e)!=segments.end()) toDelete.push(e->getDest()->getId());
-        }
-        while(!toDelete.empty()){
-            v->removeEdge(toDelete.front());
-            toDelete.pop();
-        }
-    }
-    double maxFlow = 0;
-    int srcID;
-    int destID;
-    try {
-        srcID = stationToID.at(source);
-        destID = stationToID.at(dest);
-    }
-    catch (const std::out_of_range& oor){
-        cout << "Invalid source or destination stations.\n";
-        return -1;
-    }
-    return reducedConnectivity.edmondsKarp(srcID,destID);
-}*/ // this implementation is removing edges from the original graph
-
 double Network::reducedEdgesMaxFlow(const std::string& source, const std::string& dest, unordered_set<Edge *> segments){
     Graph reducedConnectivity;
     for (Vertex* v : trainNetwork.getVertexSet()){
@@ -249,10 +213,14 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     }
     for (Vertex* v : trainNetwork.getVertexSet()) {
         for (Edge *e: v->getAdj()) {
-            if (segments.find(e) == segments.end()) reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
+            reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
         }
     }
-    double maxFlow = 0;
+    for (auto s : segments){
+        reducedConnectivity.getVertexSet().at(s->getOrig()->getId())->removeEdge(s->getDest()->getId());
+        reducedConnectivity.getVertexSet().at(s->getDest()->getId())->removeEdge(s->getOrig()->getId());
+    }
+
     int srcID;
     int destID;
     try {
@@ -265,39 +233,6 @@ double Network::reducedEdgesMaxFlow(const std::string& source, const std::string
     }
     return reducedConnectivity.edmondsKarp(srcID,destID);
 }
-
-/*vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
-    vector<int> megaSink;
-    vector<pair<int,pair<double,double>>> stationBeforeAfter;
-    pair<double,double> beforeAndAfter;
-    Graph reducedConnectivity;
-    for (Vertex* v: trainNetwork.getVertexSet()){
-        reducedConnectivity.addVertex(v->getId());
-    }
-    for (Vertex* v: trainNetwork.getVertexSet()){
-        megaSink.push_back(v->getId());
-        for (Edge * e : v->getAdj()){
-            reducedConnectivity.addEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
-        }
-    }
-    int megaSinkID = reducedConnectivity.megaSink(megaSink);
-    for (Vertex* v1: reducedConnectivity.getVertexSet()){
-        if (v1->getId()==megaSinkID) break;
-        reducedConnectivity.getVertexSet().at(v1->getId())->removeEdge(megaSinkID);
-        beforeAndAfter.first = reducedConnectivity.edmondsKarp(v1->getId(),megaSinkID);
-        beforeAndAfter.second = beforeAndAfter.first;
-        for (Edge * e : segments){
-            reducedConnectivity.getVertexSet().at(e->getOrig()->getId())->removeEdge(e->getDest()->getId());
-            reducedConnectivity.getVertexSet().at(e->getDest()->getId())->removeEdge(e->getOrig()->getId());
-            beforeAndAfter.second = reducedConnectivity.edmondsKarp(v1->getId(),megaSinkID);
-            stationBeforeAfter.emplace_back(v1->getId(),beforeAndAfter);
-            reducedConnectivity.addBidirectionalEdge(e->getOrig()->getId(),e->getDest()->getId(),e->getWeight(),e->getService());
-        }
-        reducedConnectivity.addEdge(v1->getId(),megaSinkID,INF,"");
-    }
-    reducedConnectivity.removeVertex(megaSinkID);
-    return stationBeforeAfter;
-}*/
 
 vector<pair<int,pair<double,double>>> Network::segmentFailureEvaluation(const vector<Edge *>& segments) {
     vector<pair<int,pair<double,double>>> stationBeforeAfter;

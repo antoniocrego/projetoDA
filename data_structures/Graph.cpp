@@ -148,14 +148,14 @@ void Graph::augmentFlowAlongPath(Vertex *s, Vertex *t, double f) {
 
 double Graph::edmondsKarp(int source, int target) {
     double maxFlow = 0;
-    Vertex *s = findVertex(source);
+    Vertex *s = findVertex(source);// O(v)
     Vertex *t = findVertex(target);
     if (s == nullptr || t == nullptr || s == t)
-        throw std::logic_error("Invalid source and/or target vertex");
+        return -1;
 
     // Reset the flows
     for (auto v: vertexSet) {
-        for (auto e: v->getAdj()) {
+        for (auto e: v->getAdj()) { //O(E)
             e->setFlow(0);
         }
     }
@@ -213,7 +213,8 @@ std::pair<int,double> Graph::Dijsktra(int source,int dest) {
         int top = pq.top().second;
         auto top_v = findVertex(top);
         pq.pop();
-        for(int i = 0; i <= top_v->getAdj().size()-1; i++){
+        int flag = (top_v->getAdj().size()-1);
+        for(int i = 0; i <= flag; i++){
             int v = top_v->getAdj().at(i)->getDest()->getId();
             int weight = top_v->getAdj().at(i)->getCost();
             if(dist[v]  > dist[top] + weight) {
